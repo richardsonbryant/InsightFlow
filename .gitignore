@@ -1,0 +1,51 @@
+# ==========================
+# macOS
+# ==========================
+.DS_Store
+
+# ==========================
+# Python
+# ==========================
+__pycache__/
+*.py[cod]
+.ipynb_checkpoints/
+
+# Virtual Environment
+.venv/
+venv/
+env/
+
+# Environment Variables
+.env
+
+# ==========================
+# Data
+# ==========================
+data/raw/*
+data/processed/*
+
+!data/raw/.gitkeep
+!data/processed/.gitkeep
+
+# ==========================
+# Models
+# ==========================
+models/
+*.pkl
+*.joblib
+
+# ==========================
+# Dashboard
+# ==========================
+dashboard/
+*.pbix
+
+# ==========================
+# VS Code
+# ==========================
+.vscode/
+
+# ==========================
+# Jupyter
+# ==========================
+*.nbconvert.ipynb
