@@ -2,92 +2,104 @@
 
 ## Business Background
 
-NovaCart mengalami pertumbuhan jumlah pelanggan yang cukup pesat, namun
-loyalitas pelanggan tidak tumbuh sebanding. Banyak pelanggan hanya
-bertransaksi satu kali lalu tidak kembali. Perusahaan membutuhkan
-Customer Analytics Platform untuk meningkatkan retensi pelanggan.
+NovaCart has experienced rapid customer growth; however, customer loyalty has not increased at the same pace. A significant proportion of customers make only a single purchase and never return. To address this challenge, the company requires a **Customer Analytics Platform** that enables data-driven strategies to improve customer retention and long-term customer value.
+
+---
 
 ## Business Objectives
 
--   Meningkatkan customer retention rate
--   Menurunkan customer churn rate
--   Mengidentifikasi high-value customer
--   Meningkatkan repeat purchase rate
--   Mendukung strategi retensi yang tersegmentasi
+- Increase the customer retention rate.
+- Reduce the customer churn rate.
+- Identify high-value customers.
+- Improve the repeat purchase rate.
+- Support data-driven, customer segmentation–based retention strategies.
+
+---
 
 ## Stakeholder Analysis
 
-  Stakeholder                Kebutuhan
-  -------------------------- ------------------------------------------
-  CEO                        Ringkasan performa bisnis & tren retensi
-  Marketing Manager          Segmentasi pelanggan
-  Customer Success Manager   Pelanggan berisiko churn
-  Data Analyst               Monitoring KPI
+| Stakeholder              | Business Needs                                                           |
+| ------------------------ | ------------------------------------------------------------------------ |
+| CEO                      | Executive overview of business performance and customer retention trends |
+| Marketing Manager        | Customer segmentation and campaign targeting                             |
+| Customer Success Manager | Identification of customers at risk of churn                             |
+| Data Analyst             | KPI monitoring and analytical reporting                                  |
 
-## KPI Definition
+---
+
+## KPI Definitions
 
 ### Growth
 
--   Revenue
--   Total Orders
--   Average Order Value
+- Revenue
+- Total Orders
+- Average Order Value (AOV)
 
 ### Customer
 
--   Active Customers
--   New vs Returning Customers
--   Retention Rate
--   Churn Rate
+- Active Customers
+- New vs. Returning Customers
+- Customer Retention Rate
+- Customer Churn Rate
 
-### Value
+### Customer Value
 
--   Customer Lifetime Value (CLV)
--   Segment Distribution
+- Customer Lifetime Value (CLV)
+- Customer Segment Distribution
 
 ### Product
 
--   Best Selling Category
--   Repeat Purchase Rate per Category
+- Best-Selling Product Categories
+- Repeat Purchase Rate by Product Category
+
+---
 
 ## Business Questions
 
 ### Revenue & Growth
 
--   Bagaimana tren revenue bulanan?
--   Kategori apa penyumbang terbesar?
+- How has monthly revenue changed over time?
+- Which product categories contribute the most to total revenue?
 
 ### Customer & Retention
 
--   Berapa persen pelanggan baru vs kembali?
--   Siapa pelanggan paling loyal?
--   Berapa banyak pelanggan berisiko churn?
+- What percentage of customers are new versus returning?
+- Who are the most loyal customers?
+- How many customers are currently at risk of churn?
 
-### Churn
+### Customer Churn
 
--   Karakteristik customer yang cenderung churn?
--   Faktor utama yang memengaruhi churn?
+- What characteristics are commonly associated with customers who churn?
+- Which factors have the greatest influence on customer churn?
 
-### Segmentation
+### Customer Segmentation
 
--   Ada berapa segmen pelanggan?
--   Strategi terbaik untuk tiap segmen?
+- How many customer segments can be identified?
+- What is the most appropriate retention strategy for each customer segment?
+
+---
 
 ## Data Requirements
 
-  Entity      Key Fields
-  ----------- -----------------------------------------------------------
-  Customers   customer_id, city, registration_date
-  Orders      order_id, customer_id, order_date, total_amount, category
-  Payments    payment_method, payment_value
-  Reviews     rating, review_date
+| Entity    | Key Fields                                                          |
+| --------- | ------------------------------------------------------------------- |
+| Customers | `customer_id`, `city`, `registration_date`                          |
+| Orders    | `order_id`, `customer_id`, `order_date`, `total_amount`, `category` |
+| Payments  | `payment_method`, `payment_value`                                   |
+| Reviews   | `rating`, `review_date`                                             |
 
-### Initial Business Assumption
+---
 
-Customer dianggap churn jika tidak melakukan transaksi selama 180 hari.
-Definisi ini akan divalidasi kembali pada fase Dataset Assessment.
+## Initial Business Assumption
+
+A customer is initially classified as **churned** if they have not placed a transaction within **180 days**.
+
+This assumption will be validated during the **Dataset Assessment** phase using the available historical transaction data.
+
+---
 
 ## Success Criteria
 
--   Dashboard menjawab seluruh business questions
--   Model churn memiliki recall yang baik
--   Setiap insight memiliki rekomendasi yang actionable
+- The dashboard successfully answers all defined business questions.
+- The churn prediction model achieves strong recall performance.
+- Every analytical insight is accompanied by clear and actionable business recommendations.

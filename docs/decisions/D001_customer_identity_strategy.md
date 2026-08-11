@@ -1,20 +1,20 @@
 # D001 — Customer Identity Strategy
 
-| Metadata     | Value              |
-| ------------ | ------------------ |
-| Status       | Accepted           |
-| Date         | 2026-08-10         |
-| Phase        | Dataset Assessment |
-| Category     | Data Modeling      |
-| Impact Level | High               |
+| Metadata             | Value                                 |
+| -------------------- | ------------------------------------- |
+| **Date**             | 2026-08-10                            |
+| **Phase**            | Dataset Assessment                    |
+| **Category**         | Data Modeling                         |
+| **Impact Level**     | High                                  |
+| **Related Notebook** | `00_customer_identity_strategy.ipynb` |
 
 ---
 
 # Context
 
-Dataset Olist menyediakan dua atribut yang berkaitan dengan identitas pelanggan, yaitu `customer_id` dan `customer_unique_id`.
+The Olist dataset provides two attributes related to customer identity: `customer_id` and `customer_unique_id`.
 
-Hasil data profiling menunjukkan:
+Data profiling produced the following results:
 
 | Metric                      |  Value |
 | --------------------------- | -----: |
@@ -22,7 +22,7 @@ Hasil data profiling menunjukkan:
 | Unique `customer_id`        | 99,441 |
 | Unique `customer_unique_id` | 96,096 |
 
-Analisis lebih lanjut terhadap distribusi `customer_id` pada setiap `customer_unique_id` menghasilkan temuan berikut.
+Further analysis of the distribution of `customer_id` values per `customer_unique_id` revealed the following:
 
 | Number of `customer_id` | Customers | Percentage |
 | ----------------------: | --------: | ---------: |
@@ -36,21 +36,19 @@ Analisis lebih lanjut terhadap distribusi `customer_id` pada setiap `customer_un
 |                       9 |         1 |     <0.01% |
 |                      17 |         1 |     <0.01% |
 
-Hasil profiling menunjukkan bahwa sekitar **3.12% pelanggan memiliki lebih dari satu `customer_id`**.
+The profiling results indicate that approximately **3.12% of customers are associated with more than one `customer_id`**.
 
-Dengan demikian, `customer_id` tidak dapat diasumsikan sebagai representasi tunggal pelanggan pada level bisnis. Sebaliknya, `customer_unique_id` mampu menghubungkan beberapa `customer_id` yang berasal dari pelanggan yang sama.
+Therefore, `customer_id` cannot be considered the true business representation of a customer. Instead, `customer_unique_id` links multiple `customer_id` values belonging to the same customer.
 
-Temuan ini konsisten dengan dokumentasi resmi Olist, yang menyatakan bahwa
-`customer_id` merepresentasikan instance pelanggan per order, sedangkan
-`customer_unique_id` merepresentasikan pelanggan yang sama lintas beberapa order. [1]
+This finding is consistent with the official Olist documentation, which states that `customer_id` represents a customer instance for a specific order, whereas `customer_unique_id` represents the same customer across multiple orders. [1]
 
-InsightFlow merupakan Customer Analytics Platform yang berfokus pada analisis perilaku pelanggan, seperti Customer Segmentation, Repeat Purchase Analysis, Customer Lifetime Value (CLV), Customer Retention, dan Customer Churn. Seluruh analisis tersebut membutuhkan representasi pelanggan yang konsisten di seluruh histori transaksi.
+InsightFlow is a **Customer Analytics Platform** focused on customer-level analyses such as Customer Segmentation, Repeat Purchase Analysis, Customer Lifetime Value (CLV), Customer Retention, and Customer Churn. All of these analyses require a consistent customer identity across the entire transaction history.
 
 ---
 
 # Problem
 
-Identifier pelanggan mana yang harus digunakan sebagai representasi utama (**business identifier**) agar seluruh analisis customer-level menghasilkan metrik yang konsisten, akurat, dan dapat dipertanggungjawabkan?
+Which customer identifier should be adopted as the primary **business identifier** to ensure that all customer-level analyses produce consistent, accurate, and reliable metrics?
 
 ---
 
@@ -60,14 +58,14 @@ Identifier pelanggan mana yang harus digunakan sebagai representasi utama (**bus
 
 ### Advantages
 
-- Mengikuti struktur asli dataset Olist.
-- Seluruh foreign key pada dataset secara langsung menggunakan `customer_id`.
-- Join antar tabel relatif lebih sederhana.
+- Preserves the original Olist dataset structure.
+- All foreign key relationships directly reference `customer_id`.
+- Table joins are relatively straightforward.
 
 ### Disadvantages
 
-- Riwayat transaksi pelanggan dapat terpecah apabila satu `customer_unique_id` memiliki lebih dari satu `customer_id`.
-- Metrik customer-level seperti Repeat Purchase, RFM, CLV, Retention, dan Churn berpotensi menghasilkan representasi pelanggan yang tidak konsisten.
+- Customer transaction history may become fragmented when a single `customer_unique_id` is associated with multiple `customer_id` values.
+- Customer-level metrics such as Repeat Purchase Rate, RFM Analysis, CLV, Retention, and Churn may produce inconsistent customer representations.
 
 ---
 
@@ -75,36 +73,36 @@ Identifier pelanggan mana yang harus digunakan sebagai representasi utama (**bus
 
 ### Advantages
 
-- Seluruh histori transaksi pelanggan dapat direpresentasikan sebagai satu entitas.
-- Konsisten dengan kebutuhan analisis customer-level.
-- Mendukung seluruh KPI utama pada Business Requirement InsightFlow.
+- Represents the complete transaction history of each customer as a single entity.
+- Aligns with the requirements of customer-level analytics.
+- Supports all core business KPIs defined in the InsightFlow Business Requirements.
 
 ### Disadvantages
 
-- Membutuhkan proses mapping melalui tabel Customers sebelum analisis dilakukan.
-- Menambah sedikit kompleksitas pada proses ETL dibanding menggunakan `customer_id` secara langsung.
+- Requires a mapping step through the **Customers** table before customer-level analysis.
+- Introduces slightly more complexity into the ETL process compared to using `customer_id` directly.
 
 ---
 
 # Decision
 
-InsightFlow mengadopsi **Hybrid Customer Identity Strategy**.
+InsightFlow adopts a **Hybrid Customer Identity Strategy**.
 
-Keputusan yang diambil adalah sebagai berikut:
+The decisions are as follows:
 
-- **Raw Layer** tetap mempertahankan struktur asli dataset Olist tanpa perubahan.
-- `customer_id` tetap digunakan sebagai **technical identifier** untuk menjaga integritas relasi antar tabel.
-- **Analytics Layer** menggunakan `customer_unique_id` sebagai **business identifier** untuk seluruh analisis customer-level.
+- The **Raw Layer** preserves the original Olist dataset without modification.
+- `customer_id` remains the **technical identifier** to maintain referential integrity across tables.
+- The **Analytics Layer** uses `customer_unique_id` as the **business identifier** for all customer-level analyses.
 
-Pada scope MVP, **tidak dibuat surrogate key tambahan**. `customer_unique_id` digunakan secara langsung sebagai representasi pelanggan pada layer analitik karena telah memenuhi seluruh kebutuhan bisnis dan tidak terdapat requirement yang mengharuskan penggunaan surrogate key.
+Within the MVP scope, **no additional surrogate key will be introduced**. `customer_unique_id` is used directly as the customer identifier in the analytics layer because it fully satisfies the current business requirements, and there is no requirement that justifies introducing a surrogate key.
 
 ---
 
 # Decision Rationale
 
-Walaupun hanya sekitar **3.12% pelanggan** memiliki lebih dari satu `customer_id`, keberadaan pelanggan tersebut berdampak langsung terhadap seluruh analisis customer-level.
+Although only **3.12% of customers** have more than one `customer_id`, these cases have a direct impact on every customer-level analysis.
 
-Apabila `customer_id` digunakan sebagai identifier utama, histori transaksi pelanggan tersebut akan terpecah menjadi beberapa entitas sehingga menghasilkan perhitungan yang tidak konsisten untuk:
+If `customer_id` were used as the primary customer identifier, the transaction history of these customers would be fragmented across multiple entities, leading to inconsistent calculations for:
 
 - Repeat Purchase Rate
 - Customer Lifetime Value (CLV)
@@ -112,56 +110,60 @@ Apabila `customer_id` digunakan sebagai identifier utama, histori transaksi pela
 - Customer Retention
 - Customer Churn
 
-Sebaliknya, penggunaan `customer_unique_id` memungkinkan seluruh histori transaksi pelanggan direpresentasikan sebagai satu entitas tanpa mengubah struktur data mentah.
+Using `customer_unique_id`, on the other hand, allows the complete transaction history of each customer to be represented as a single business entity without altering the raw dataset structure.
 
-Alternatif penggunaan surrogate key juga dipertimbangkan. Namun, berdasarkan scope MVP InsightFlow, tidak ditemukan kebutuhan yang mengharuskan implementasi tersebut. Dataset yang digunakan relatif kecil (~100 ribu pelanggan), tidak memiliki requirement Slowly Changing Dimension (SCD), serta tidak membutuhkan optimasi data warehouse tingkat production. Oleh karena itu, penambahan surrogate key dinilai hanya akan menambah kompleksitas ETL tanpa memberikan manfaat yang sebanding pada fase MVP.
+The introduction of a surrogate key was also considered. However, within the MVP scope of InsightFlow, no business or technical requirement justifies its implementation. The dataset is relatively small (approximately **100,000 customers**), does not require Slowly Changing Dimensions (SCD), and does not target production-scale data warehouse optimization. Therefore, adding a surrogate key would increase ETL complexity without providing meaningful business value at this stage.
 
 ---
 
 # Consequences
 
-Keputusan ini menjadi standar untuk seluruh komponen InsightFlow.
+This decision becomes the standard for all InsightFlow components.
 
 ## Database Design
 
-- Struktur raw database tetap mengikuti dataset Olist.
-- Analytics layer menggunakan `customer_unique_id` sebagai representasi pelanggan.
+- The Raw Database preserves the original Olist schema.
+- The Analytics Layer represents customers using `customer_unique_id`.
 
 ## ETL Pipeline
 
-- ETL melakukan mapping antara `customer_id` dan `customer_unique_id`.
-- Seluruh feature customer dibangun berdasarkan `customer_unique_id`.
+- The ETL pipeline maps `customer_id` to `customer_unique_id`.
+- All customer-level features are generated using `customer_unique_id`.
 
 ## SQL Analytics
 
-Seluruh query customer-level menggunakan:
+All customer-level queries use:
 
-- `GROUP BY customer_unique_id`
+```sql
+GROUP BY customer_unique_id
+```
 
-bukan:
+instead of:
 
-- `GROUP BY customer_id`
+```sql
+GROUP BY customer_id
+```
 
 ## Dashboard
 
-Seluruh KPI customer dihitung menggunakan `customer_unique_id`, termasuk:
+All customer KPIs are calculated using `customer_unique_id`, including:
 
-- Active Customer
-- Returning Customer
+- Active Customers
+- Returning Customers
 - Customer Retention
 - Customer Churn
-- Customer Lifetime Value
+- Customer Lifetime Value (CLV)
 - Customer Segmentation
 
 ## Machine Learning
 
-Seluruh feature engineering pada level pelanggan menggunakan `customer_unique_id` sebagai entity utama.
+All customer-level feature engineering is performed using `customer_unique_id` as the primary entity.
 
 ---
 
 # Impact
 
-### Affected Components
+## Affected Components
 
 - Database Design
 - ETL Pipeline
@@ -169,7 +171,7 @@ Seluruh feature engineering pada level pelanggan menggunakan `customer_unique_id
 - Dashboard
 - Machine Learning
 
-### Related Decisions
+## Related Decisions
 
 None (First Architectural Decision)
 
@@ -177,10 +179,11 @@ None (First Architectural Decision)
 
 # Next Action
 
-Tahap selanjutnya adalah mengevaluasi kualitas atribut pelanggan pada setiap `customer_unique_id` sebagai bagian dari Data Quality Assessment. Hasil evaluasi tersebut akan digunakan sebagai dasar penyusunan Database Design dan ETL Pipeline.
+The next step is to evaluate the quality of customer attributes associated with each `customer_unique_id` as part of the **Data Quality Assessment**. The results of this assessment will serve as the foundation for the Database Design and ETL Pipeline.
+
+---
 
 # References
 
-[1] Olist, Brazilian E-Commerce Public Dataset by Olist — Data Description.
-Kaggle. Diakses 11 Agustus 2026.
+[1] Olist. _Brazilian E-Commerce Public Dataset by Olist – Data Description_. Kaggle. Accessed August 11, 2026.
 https://www.kaggle.com/datasets/olistbr/brazilian-ecommerce/data

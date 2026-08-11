@@ -2,12 +2,11 @@
 
 ## Primary Dataset
 
-Olist Brazilian E-Commerce Public Dataset.
+The project uses the **Olist Brazilian E-Commerce Public Dataset** as the primary data source for the MVP.
 
 ## Strategy
 
--   Menggunakan data asli untuk MVP.
--   Tidak menggunakan tabel sintetis pada MVP.
--   Churn dibuat sebagai derived feature berdasarkan business rule.
--   Tabel tambahan (campaign, loyalty, dll.) ditunda ke fase lanjutan
-    bila benar-benar diperlukan.
+- Use the original Olist dataset as the primary data source for the MVP.
+- Do not introduce synthetic datasets during the MVP phase.
+- Derive the **churn** label based on predefined business rules rather than relying on an existing target variable.
+- Postpone additional datasets (e.g., marketing campaigns, loyalty programs, or customer engagement data) to future project phases if they become necessary.

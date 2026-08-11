@@ -2,30 +2,36 @@
 
 ## Product
 
-**InsightFlow**
+**InsightFlow** is an internal customer analytics platform designed to help **NovaCart** better understand customer behavior, identify customers at risk of churn, and support data-driven customer retention strategies.
 
-InsightFlow adalah platform analitik internal yang membantu NovaCart
-memahami perilaku pelanggan, mengidentifikasi pelanggan berisiko churn,
-dan mendukung keputusan retensi berbasis data.
+---
 
 ## Target Users
 
--   CEO
--   Marketing Manager
--   Customer Success Manager
+- CEO
+- Marketing Manager
+- Customer Success Manager
+
+---
 
 ## MVP Scope
 
--   SQL Analytics
--   Dashboard
--   Customer Segmentation
--   Churn Prediction
--   Prediction Explanation
--   Business Report
+The initial MVP includes the following capabilities:
+
+- SQL Analytics
+- Interactive Business Dashboard
+- Customer Segmentation
+- Customer Churn Prediction
+- Prediction Explanation
+- Business Reporting
+
+---
 
 ## Out of Scope
 
--   FastAPI
--   LLM Assistant
--   Campaign Analytics
--   Product Dashboard
+The following features are intentionally excluded from the MVP and may be considered in future releases:
+
+- FastAPI-based backend services
+- LLM-powered Analytics Assistant
+- Campaign Analytics
+- Product Performance Dashboard
