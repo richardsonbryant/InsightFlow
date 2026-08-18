@@ -23,7 +23,7 @@ These inconsistencies violate the expected business process chronology:
 
 Purchase → Approval → Carrier Pickup → Customer Delivery
 
-Since InsightFlow relies on transaction history for customer analytics, it is necessary to determine whether these anomalies should be preserved, corrected, or removed before downstream processing.
+Since InsightFlow relies on transaction history for customer analytics, it is necessary to determine whether these anomalies should be preserved, corrected, or removed before downstream processing. However, investigation revealed that order_purchase_timestamp—the foundational column for churn and repeat purchase analysis in InsightFlow—remains unaffected by these anomalies (0 violations in purchase → approved and purchase → delivered rules). This indicates that anomalies are confined to internal logistics timestamps (approved, carrier, delivered) and do not compromise the validity of core business transactions for customer analytics purposes.
 
 ---
 
@@ -64,6 +64,7 @@ No original timestamps will be altered.
 This decision was made for the following reasons:
 
 - The anomalies affect only a small proportion of the dataset (~1.39%).
+- Additionally, anomalous orders demonstrate faster average delivery times (median 7 days) compared to normal orders (median 10 days), suggesting that timeline inconsistencies may result from delayed system logging of the approval timestamp rather than actual fulfillment failures.
 - Nearly all affected orders represent successfully completed customer transactions (Delivered).
 - Revenue associated with anomalous orders is relatively small (~1.31%).
 - No objective evidence exists to determine which timestamp is incorrect.
@@ -154,6 +155,20 @@ The following consequences are accepted as part of this decision:
 - Delivery performance analysis may optionally exclude flagged records.
 - Customer analytics, segmentation, retention analysis, and churn modelling will continue using the complete transaction history.
 - All downstream users can explicitly identify records affected by timeline inconsistencies.
+
+---
+
+## Implementation Details for ETL
+
+The timeline anomaly flag will be implemented as follows:
+
+- **Field Name:** `has_timeline_anomaly`
+- **Type:** Boolean (TRUE/FALSE)
+- **Logic:** Set to TRUE for any order_id present in either:
+  - approved_at > delivered_carrier_date (1,359 orders)
+  - delivered_carrier_date > delivered_customer_date (23 orders)
+- **Placement:** Derived field created during ETL, not stored in raw database
+- **Usage:** Enables downstream analyses to conditionally exclude flagged records when appropriate
 
 ---
 
